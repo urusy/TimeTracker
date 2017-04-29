@@ -104,5 +104,13 @@ namespace TimeTracker
         public DateTime Start { get; set; }
         public DateTime Finish { get; set; }
         public long Time { get; set; }
+        public string TimeDisp
+        {
+            get
+            {
+                TimeSpan ts = new TimeSpan(0, 0, (int)this.Time);
+                return ts.ToString();
+            }
+        }
     }
 }
