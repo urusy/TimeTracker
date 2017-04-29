@@ -5,25 +5,27 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:TimeTracker"
         mc:Ignorable="d"
-        Title="MainWindow" Height="550" Width="340" ResizeMode="NoResize">
-    <Grid>
-        <Label Content="00:00:00" Margin="10" VerticalAlignment="Top" FontSize="48" HorizontalContentAlignment="Right"/>
-        <Button Content="Start" Margin="10,89,0,0" VerticalAlignment="Top" Height="150" Width="150" HorizontalAlignment="Left" Click="Button_Click"/>
-        <Button Content="Stop" Margin="0,89,10,0" VerticalAlignment="Top" Height="150" HorizontalAlignment="Right" Width="150"/>
-        <ListView Margin="10,0,10,10" RenderTransformOrigin="0.5,0.5" Height="252" VerticalAlignment="Bottom">
-            <ListView.RenderTransform>
-                <TransformGroup>
-                    <ScaleTransform/>
-                    <SkewTransform AngleX="0.133"/>
-                    <RotateTransform/>
-                    <TranslateTransform X="0.331"/>
-                </TransformGroup>
-            </ListView.RenderTransform>
+        Title="TimeTracker" Height="678" Width="574" ResizeMode="NoResize">
+    <Grid Margin="0">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition/>
+            <ColumnDefinition/>
+        </Grid.ColumnDefinitions>
+        <Label Name="TimeLabel" Content="00:00:00" Margin="10,10,10,0" VerticalAlignment="Top" FontSize="48" HorizontalContentAlignment="Right" Grid.ColumnSpan="2" Height="74"/>
+        <TextBox Name="TitleTextBox" Height="60" Margin="10,89,10,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Grid.ColumnSpan="2" FontSize="36"/>
+        <Button Name="StartButton" Content="Start" Margin="10,154,0,0" VerticalAlignment="Top" Height="60" Width="264" HorizontalAlignment="Left" Click="StartButton_Click"/>
+        <Button Name="FinishButton" Content="Stop" Margin="0,154,10,0" VerticalAlignment="Top" Height="60" HorizontalAlignment="Right" Width="264" Click="FinishButton_Click" Grid.Column="1"/>
+        <ListView ItemsSource="{Binding}" Height="385" Margin="10,0,10,35" VerticalAlignment="Bottom" Name="StaticticsListView" Grid.ColumnSpan="2">
             <ListView.View>
                 <GridView>
-                    <GridViewColumn/>
+                    <GridViewColumn Header="Title" Width="150" DisplayMemberBinding="{Binding Title}"/>
+                    <GridViewColumn Header="Time"  Width="90" DisplayMemberBinding="{Binding Time}"/>
+                    <GridViewColumn Header="Start" Width="140" DisplayMemberBinding="{Binding Start, StringFormat=yyyy/MM/dd hh:mm:ss}"/>
+                    <GridViewColumn Header="Finish" Width="140" DisplayMemberBinding="{Binding Finish, StringFormat=yyyy/MM/dd hh:mm:ss}"/>
                 </GridView>
             </ListView.View>
         </ListView>
+        <Button Name="DeleteButton" Content="Delete" HorizontalAlignment="Right" Margin="0,0,10,10" VerticalAlignment="Bottom" Width="75" Grid.Column="1" Height="20" />
+        <Button Name="SubmitButton" Content="Submit" HorizontalAlignment="Right" Margin="0,0,90,10" VerticalAlignment="Bottom" Width="75" Grid.Column="1" Height="20" />
     </Grid>
 </Window>
