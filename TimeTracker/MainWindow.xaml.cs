@@ -24,5 +24,18 @@ namespace TimeTracker
         {
             InitializeComponent();
         }
+
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+            var button = (Button)sender;
+            if (button.Content.Equals("Start"))
+            {
+                button.Content = "Pause";
+            }
+            else
+            {
+                button.Content = "Start";
+            }
+        }
     }
 }

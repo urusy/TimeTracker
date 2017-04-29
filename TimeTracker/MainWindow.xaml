@@ -5,8 +5,25 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:TimeTracker"
         mc:Ignorable="d"
-        Title="MainWindow" Height="680" Width="500" ResizeMode="NoResize">
+        Title="MainWindow" Height="550" Width="340" ResizeMode="NoResize">
     <Grid>
-
+        <Label Content="00:00:00" Margin="10" VerticalAlignment="Top" FontSize="48" HorizontalContentAlignment="Right"/>
+        <Button Content="Start" Margin="10,89,0,0" VerticalAlignment="Top" Height="150" Width="150" HorizontalAlignment="Left" Click="Button_Click"/>
+        <Button Content="Stop" Margin="0,89,10,0" VerticalAlignment="Top" Height="150" HorizontalAlignment="Right" Width="150"/>
+        <ListView Margin="10,0,10,10" RenderTransformOrigin="0.5,0.5" Height="252" VerticalAlignment="Bottom">
+            <ListView.RenderTransform>
+                <TransformGroup>
+                    <ScaleTransform/>
+                    <SkewTransform AngleX="0.133"/>
+                    <RotateTransform/>
+                    <TranslateTransform X="0.331"/>
+                </TransformGroup>
+            </ListView.RenderTransform>
+            <ListView.View>
+                <GridView>
+                    <GridViewColumn/>
+                </GridView>
+            </ListView.View>
+        </ListView>
     </Grid>
 </Window>
