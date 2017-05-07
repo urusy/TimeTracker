@@ -7,10 +7,6 @@
         mc:Ignorable="d"
         Title="TimeTracker" Height="678" Width="574" ResizeMode="NoResize">
     <Grid Margin="0">
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition/>
-            <ColumnDefinition/>
-        </Grid.ColumnDefinitions>
         <Label Name="TimeLabel" Content="00:00:00" Margin="10,10,10,0" VerticalAlignment="Top" FontSize="48" HorizontalContentAlignment="Right" Grid.ColumnSpan="2" Height="74"/>
         <TextBox Name="TitleTextBox" Height="60" Margin="10,89,10,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Grid.ColumnSpan="2" FontSize="36"/>
         <Button Name="StartButton" Content="Start" Margin="10,154,0,0" VerticalAlignment="Top" Height="60" Width="264" HorizontalAlignment="Left" Click="StartButton_Click"/>
@@ -24,6 +20,11 @@
                     <GridViewColumn Header="Finish" Width="140" DisplayMemberBinding="{Binding Finish, StringFormat=yyyy/MM/dd hh:mm:ss}"/>
                 </GridView>
             </ListView.View>
+            <ListView.Resources>
+                <Style TargetType="ListViewItem">
+                    <EventSetter Event="MouseDoubleClick" Handler="StaticticsListView_MouseDoubleClick"/>
+                </Style>
+            </ListView.Resources>
         </ListView>
         <Button Name="DeleteButton" Content="Delete" HorizontalAlignment="Right" Margin="0,0,10,10" VerticalAlignment="Bottom" Width="75" Grid.Column="1" Height="20" />
         <Button Name="SubmitButton" Content="Submit" HorizontalAlignment="Right" Margin="0,0,90,10" VerticalAlignment="Bottom" Width="75" Grid.Column="1" Height="20" />
