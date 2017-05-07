@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.ObjectModel;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Threading;
@@ -20,13 +21,20 @@ namespace TimeTracker
         {
             InitializeComponent();
 
-            this.list = new ObservableCollection<Statictics>();
+            this.list = new ObservableCollection<Statictics>(common.Sqlite.selectStaticticsAll());
             this.StaticticsListView.DataContext = list;
             //this.list = this.StaticticsListView.DataContext;
 
             this.StartButton.IsEnabled = true;
             this.FinishButton.IsEnabled = false;
             this.DeleteButton.IsEnabled = false;
+
+            var context = DispatcherSynchronizationContext.Current;
+
+            Task.Factory.StartNew(() =>
+            {
+                common.Sqlite.setupDatabase();
+            });
         }
 
         private void StartButton_Click(object sender, RoutedEventArgs e)
@@ -99,7 +107,12 @@ namespace TimeTracker
             }
 
             // 該当する行がない場合、追加
-            if (!hitFlg) this.list.Add(this.statictics);
+            if (!hitFlg)
+            {
+                this.list.Add(this.statictics);
+                // DBに登録
+                common.Sqlite.insertStatictics(this.statictics);
+            }
 
             this.secondCounter = 0;
             TimeSpan ts = new TimeSpan(0, 0, (int)this.secondCounter);
