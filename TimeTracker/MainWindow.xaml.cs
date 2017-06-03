@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.ObjectModel;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Threading;
@@ -19,14 +20,17 @@ namespace TimeTracker
         public MainWindow()
         {
             InitializeComponent();
-
-            this.list = new ObservableCollection<Statictics>();
-            this.StaticticsListView.DataContext = list;
-            //this.list = this.StaticticsListView.DataContext;
+            
+            common.Sqlite.SetupDatabase();
+            
+            this.StaticticsListView.DataContext = new ObservableCollection<Statictics>(common.Sqlite.SelectStaticticsAll());
 
             this.StartButton.IsEnabled = true;
             this.FinishButton.IsEnabled = false;
             this.DeleteButton.IsEnabled = false;
+
+            var context = DispatcherSynchronizationContext.Current;
+            
         }
 
         private void StartButton_Click(object sender, RoutedEventArgs e)
@@ -39,7 +43,6 @@ namespace TimeTracker
                 if (this.statictics == null)
                 {
                     this.statictics = new Statictics();
-                    this.statictics.Id = Guid.NewGuid().ToString();
                     this.statictics.Start = DateTime.Now;
 
                     this.timer = new DispatcherTimer(DispatcherPriority.Normal);
@@ -54,7 +57,7 @@ namespace TimeTracker
                 }
                 button.Content = "Pause";
 
-                this.TitleTextBox.IsEnabled = false;
+                this.TitleTextBox.IsEnabled = true;
 
                 this.FinishButton.IsEnabled = true;
             }
@@ -83,23 +86,23 @@ namespace TimeTracker
 
             this.StartButton.IsEnabled = true;
             this.FinishButton.IsEnabled = false;
-
-            int i = 0;
-            bool hitFlg = false;
-            foreach (Statictics item in this.list)
-            {
-                if (item.Id.Equals(this.statictics.Id))
-                {
-                    this.list[i] = this.statictics;
-                    hitFlg = true;
-                    this.StaticticsListView.Items.Refresh();
-                    break;
-                }
-                i++;
-            }
-
+            
             // 該当する行がない場合、追加
-            if (!hitFlg) this.list.Add(this.statictics);
+            if (this.statictics.Id == null
+                || this.statictics.Id.Equals(String.Empty))
+            {
+                this.statictics.Id = Guid.NewGuid().ToString();
+                
+                // DBに登録
+                common.Sqlite.InsertStatictics(this.statictics);
+            }
+            else
+            {
+                // DBを更新
+                common.Sqlite.UpdateStatictics(this.statictics);
+            }
+            
+            this.StaticticsListView.DataContext = new ObservableCollection<Statictics>(common.Sqlite.SelectStaticticsAll());
 
             this.secondCounter = 0;
             TimeSpan ts = new TimeSpan(0, 0, (int)this.secondCounter);
