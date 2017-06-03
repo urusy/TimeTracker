@@ -13,8 +13,10 @@ namespace TimeTracker.common
         private static readonly string APP_DATA_PATH = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + @"\TimeTracker\";
         // DBファイル名
         private const string DB_FILE_NAME = "TimeTracker.db";
+        // テーブル名:統計
+        private const string TBL_STTCS = "statictics";
 
-        public static bool setupDatabase()
+        public static bool SetupDatabase()
         {
             bool ret = false;
 
@@ -27,7 +29,7 @@ namespace TimeTracker.common
                     if (!File.Exists(APP_DATA_PATH + DB_FILE_NAME))
                     {
                         // ファイルが存在しない場合、DB作成
-                        createDb();
+                        CreateDb();
                     }
                 }
                 else
@@ -36,7 +38,7 @@ namespace TimeTracker.common
                     Directory.CreateDirectory(APP_DATA_PATH);
 
                     // DBを作成する
-                    createDb();
+                    CreateDb();
                 }
                 ret = true;
             }
@@ -47,7 +49,7 @@ namespace TimeTracker.common
             return ret;
         }
 
-        private static void createDb()
+        private static void CreateDb()
         {
             using (var conn = new SQLiteConnection("Data Source=" + APP_DATA_PATH + DB_FILE_NAME))
             {
@@ -55,11 +57,11 @@ namespace TimeTracker.common
                 using (SQLiteCommand command = conn.CreateCommand())
                 {
                     StringBuilder sb = new StringBuilder();
-                    sb.Append("create table statictics (");
+                    sb.Append("create table " + TBL_STTCS + "(");
                     sb.Append("id TEXT PRIMARY KEY,");
                     sb.Append("title TEXT,");
-                    sb.Append("start DATETIME,");
-                    sb.Append("finish DATETIME,");
+                    sb.Append("start TEXT,");
+                    sb.Append("finish TEXT,");
                     sb.Append("time INTEGER");
                     sb.Append(")");
 
@@ -70,7 +72,7 @@ namespace TimeTracker.common
             }
         }
 
-        public static List<Statictics> selectStaticticsAll()
+        public static List<Statictics> SelectStaticticsAll()
         {
             List<Statictics> list = new List<Statictics>();
 
@@ -79,22 +81,15 @@ namespace TimeTracker.common
                 conn.Open();
                 using (SQLiteCommand command = conn.CreateCommand())
                 {
-                    command.CommandText = @"select * from statictics order by start";
+                    command.CommandText = @"select * from " + TBL_STTCS + " order by finish desc";
                     using (SQLiteDataReader reader = command.ExecuteReader())
                     {
                         while (reader.Read())
                         {
-                            //list.Add(new Statictics {
-                            //    Id = reader["id"].ToString(),
-                            //    Title = reader["title"].ToString(),
-                            //    Start = DateTime.Parse(reader["start"].ToString()),
-                            //    Finish = DateTime.Parse(reader["finish"].ToString()),
-                            //    Time = long.Parse(reader["time"].ToString())
-                            //});
                             string id = reader["id"].ToString();
                             string title = reader["title"].ToString();
-                            //string strStart = reader["start"].ToString();
-                            DateTime start = (DateTime)reader["start"];
+                            Console.WriteLine(reader["start"].ToString());
+                            DateTime start = DateTime.Parse(reader["start"].ToString());
                             DateTime finish = DateTime.Parse(reader["finish"].ToString());
                             long time = long.Parse(reader["time"].ToString());
                             Statictics item = new Statictics();
@@ -112,7 +107,7 @@ namespace TimeTracker.common
             return list;
         }
 
-        public static void insertStatictics(Statictics statictics)
+        public static void InsertStatictics(Statictics statictics)
         {
             using (var conn = new SQLiteConnection("Data Source=" + APP_DATA_PATH + DB_FILE_NAME))
             {
@@ -122,7 +117,7 @@ namespace TimeTracker.common
                     using (SQLiteCommand command = conn.CreateCommand())
                     {
                         StringBuilder sb = new StringBuilder();
-                        sb.Append("insert into statictics (");
+                        sb.Append("insert into " + TBL_STTCS + "(");
                         sb.Append("id, title, start, finish, time");
                         sb.Append(") values (");
                         sb.Append("'" + statictics.Id + "',");
@@ -141,12 +136,32 @@ namespace TimeTracker.common
             }
         }
 
-        public static void updateStatictics(Statictics statictics)
+        public static void UpdateStatictics(Statictics statictics)
         {
+            using (var conn = new SQLiteConnection("Data Source=" + APP_DATA_PATH + DB_FILE_NAME))
+            {
+                conn.Open();
+                using (SQLiteTransaction tran = conn.BeginTransaction())
+                {
+                    using (SQLiteCommand command = conn.CreateCommand())
+                    {
+                        StringBuilder sb = new StringBuilder();
+                        sb.Append("update " + TBL_STTCS + " set ");
+                        sb.Append("title = '" + statictics.Title + "',");
+                        sb.Append("finish = '" + statictics.Finish + "', ");
+                        sb.Append("time = '" + statictics.Time + "' ");
+                        sb.Append("where id = '" + statictics.Id + "'");
 
+                        command.CommandText = sb.ToString();
+                        command.ExecuteNonQuery();
+                    }
+                    tran.Commit();
+                }
+                conn.Clone();
+            }
         }
 
-        public static void deleteStatictics(string id)
+        public static void DeleteStatictics(string id)
         {
 
         }
